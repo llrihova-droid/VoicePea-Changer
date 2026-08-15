@@ -9,17 +9,14 @@
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#18181b">
 
-  <!-- =========================================================
-       ALL CSS STYLES DIRECTLY EMBEDDED INSIDE HTML
-     ========================================================= -->
   <style>
-    /* 1. CORE HARDWARE ACCELERATION & GLOBAL SMOOTHNESS */
+    /* =========================================================
+       1. CORE ACCELERATION & LIQUID GLASS BASE
+       ========================================================= */
     * {
       box-sizing: border-box;
-      /* Smooth physical motion curve */
       transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
       -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
     }
 
     body {
@@ -35,64 +32,39 @@
       justify-content: center;
       align-items: center;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      overflow-x: hidden;
     }
 
-    /* 2. LIQUID GLASS CONTAINER (GPU ACCELERATED) */
+    /* MAIN APP CONTAINER */
     .voizz-box {
-      width: 1100px;
+      width: 650px;
       max-width: 95vw;
       padding: 32px;
       border-radius: 28px;
       position: relative;
-      /* Force GPU rendering for 60fps smoothness */
       transform: translateZ(0);
-      will-change: transform, backdrop-filter;
-    }
-
-    /* Liquid Glass Theme (Default) */
-    .voizz-box.theme-liquid-glass,
-    .voizz-box {
       background: rgba(255, 255, 255, 0.06) !important;
       backdrop-filter: blur(28px) saturate(210%) !important;
       -webkit-backdrop-filter: blur(28px) saturate(210%) !important;
       border: 1px solid rgba(255, 255, 255, 0.18) !important;
-      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6),
-                  inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
     }
 
-    /* Normal Flat Dark Theme Toggle */
-    .voizz-box.theme-normal {
-      background: #18181b !important;
-      backdrop-filter: none !important;
-      -webkit-backdrop-filter: none !important;
-      border: 1px solid #27272a !important;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8) !important;
-    }
-
-    /* 3. LAYOUT GRID & CARDS */
     .app-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      padding-bottom: 16px;
+      padding-bottom: 12px;
     }
 
     .app-header h2 {
       margin: 0;
       font-size: 22px;
-      font-weight: 700;
       color: #1db954;
     }
 
-    .main-layout {
-      display: grid;
-      grid-template-columns: 1fr 1.2fr 1fr;
-      gap: 20px;
-    }
-
+    /* CARD PANELS */
     .card-panel {
       background: rgba(0, 0, 0, 0.3);
       border: 1px solid rgba(255, 255, 255, 0.08);
@@ -110,7 +82,7 @@
       text-transform: uppercase;
     }
 
-    /* 4. FORM INPUTS, SLIDERS & BUTTONS */
+    /* INPUTS & BUTTONS */
     input[type="text"], input[type="password"], select {
       width: 100%;
       padding: 12px 16px;
@@ -121,14 +93,8 @@
       outline: none;
     }
 
-    input[type="text"]:focus, input[type="password"]:focus, select:focus {
-      border-color: #1db954;
-      box-shadow: 0 0 12px rgba(29, 185, 84, 0.3);
-    }
-
     input[type="range"] {
       -webkit-appearance: none;
-      appearance: none;
       width: 100%;
       height: 6px;
       border-radius: 3px;
@@ -138,18 +104,11 @@
 
     input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none;
-      appearance: none;
       width: 18px;
       height: 18px;
       border-radius: 50%;
       background: #1db954;
       cursor: pointer;
-      transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    input[type="range"]::-webkit-slider-thumb:hover {
-      transform: scale(1.3);
-      background: #1ed760;
     }
 
     .btn {
@@ -159,21 +118,14 @@
       font-weight: 600;
       font-size: 14px;
       cursor: pointer;
-      outline: none;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
     }
 
-    .btn:hover {
-      transform: translateY(-2px);
-      filter: brightness(1.15);
-    }
-
-    .btn:active {
-      transform: translateY(1px) scale(0.98);
-    }
+    .btn:hover { transform: translateY(-2px); filter: brightness(1.15); }
+    .btn:active { transform: translateY(1px) scale(0.98); }
 
     .btn-primary { background: #1db954; color: #000; }
     .btn-secondary { background: rgba(255, 255, 255, 0.1); color: #fff; }
@@ -187,168 +139,184 @@
       flex-wrap: wrap;
     }
 
-    .theme-toggle-btn {
-      background: rgba(255, 255, 255, 0.1);
+    /* =========================================================
+       2. MODAL OVERLAYS (THIS FIXES ALL UIS SHOWING AT ONCE!)
+       ========================================================= */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      
+      /* HIDE POPUPS BY DEFAULT */
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    /* ACTIVE MODAL STATE */
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-content {
+      width: 500px;
+      max-width: 90vw;
+      background: #18181b;
       border: 1px solid rgba(255, 255, 255, 0.2);
-      color: #fff;
-      padding: 8px 16px;
-      border-radius: 20px;
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 13px;
+      border-radius: 24px;
+      padding: 28px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+      transform: scale(0.9);
+      transition: transform 0.3s ease;
     }
 
-    .sample-quote {
-      font-style: italic;
-      font-size: 13px;
-      color: #aaa;
-      border-left: 3px solid #1db954;
-      margin: 0;
-      padding-left: 10px;
+    .modal-overlay.active .modal-content {
+      transform: scale(1);
     }
 
-    .timer-display {
-      font-size: 22px;
-      font-weight: bold;
-      text-align: center;
-      color: #1db954;
-    }
-
-    /* 5. MOBILE / IPHONE / TABLET BREAKPOINTS */
+    /* RESPONSIVE MOBILE BREAKPOINTS */
     @media screen and (max-width: 1023px) {
-      .main-layout {
-        grid-template-columns: 1fr; /* Single column layout on phone/tablet */
-      }
-
-      .pc-only-settings {
-        display: none !important; /* Hide sliders on mobile */
-      }
-
-      .theme-toggle-btn {
-        display: none !important; /* Lock Liquid Glass on mobile */
-      }
-
-      .voizz-box {
-        background: rgba(255, 255, 255, 0.08) !important;
-        backdrop-filter: blur(32px) saturate(220%) !important;
-        -webkit-backdrop-filter: blur(32px) saturate(220%) !important;
-      }
+      .pc-only-settings { display: none !important; }
     }
   </style>
 </head>
 <body>
 
-  <!-- Main App Window -->
-  <div class="voizz-box theme-liquid-glass">
+  <!-- =========================================================
+       MAIN UI WINDOW (ALWAYS VISIBLE)
+     ========================================================= -->
+  <div class="voizz-box">
     
     <header class="app-header">
       <h2>🎙️ VoicePea Changer</h2>
-      <button id="themeToggleBtn" class="theme-toggle-btn">✨ Toggle Theme</button>
     </header>
 
-    <main class="main-layout">
+    <main class="card-panel">
+      
+      <div style="text-align: center; padding: 10px; background: #fff; color: #000; border-radius: 12px; font-weight: bold; font-size: 14px; cursor: pointer;">
+        Sign in with Google
+      </div>
 
-      <!-- Left Panel -->
-      <section class="card-panel">
-        <h3>🎙️ Hardware Access</h3>
-        <p style="font-size: 13px; color: #ccc;">
-          VoicePea Changer needs access to your hardware microphone to process real-time voice distortion.
-        </p>
-        <div style="color: #aaa; font-size: 13px;">Detecting hardware devices...</div>
-        <div class="btn-group">
-          <button class="btn btn-secondary">Deny</button>
-          <button class="btn btn-primary">Grant Mic Access</button>
-        </div>
-      </section>
+      <input type="text" placeholder="Type text to speak, or press the mic">
 
-      <!-- Center Panel -->
-      <section class="card-panel">
-        <div style="text-align: center; padding: 8px; background: #fff; color: #000; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">
-          Sign in with Google
-        </div>
+      <div>
+        <label style="font-size: 12px; color: #aaa;">Select Engine Voice Target:</label>
+        <select>
+          <option>Custom Voice 1 (Custom)</option>
+          <option>Cyber Pitch Alpha</option>
+          <option>Deep Robotic Low</option>
+        </select>
+      </div>
 
-        <input type="text" placeholder="Type text to speak, or press the mic">
-
+      <!-- PC ONLY SETTINGS -->
+      <div class="pc-only-settings" style="display: flex; flex-direction: column; gap: 12px;">
         <div>
-          <label style="font-size: 12px; color: #aaa;">Select Engine Voice Target:</label>
-          <select>
-            <option>Custom Voice 1 (Custom)</option>
-            <option>Cyber Pitch Alpha</option>
-            <option>Deep Robotic Low</option>
-          </select>
+          <label style="font-size: 12px; color: #aaa;">Playback Rate / Speed:</label>
+          <input type="range" min="0.5" max="2.0" step="0.1" value="1.0">
         </div>
-
-        <!-- PC ONLY SETTINGS -->
-        <div class="pc-only-settings" style="display: flex; flex-direction: column; gap: 12px;">
-          <div>
-            <label style="font-size: 12px; color: #aaa;">Playback Rate / Speed:</label>
-            <input type="range" min="0.5" max="2.0" step="0.1" value="1.0">
-          </div>
-          <div>
-            <label style="font-size: 12px; color: #aaa;">DSP Waveshaper Distortion:</label>
-            <input type="range" min="0.0" max="1.0" step="0.05" value="0.2">
-          </div>
-          <div>
-            <label style="font-size: 12px; color: #aaa;">Chunk Time-Inversion (Reverse):</label>
-            <input type="range" min="0.0" max="1.0" step="0.05" value="0.0">
-          </div>
-          <div>
-            <label style="font-size: 12px; color: #aaa;">Whisper / OpenAI API Key (Optional):</label>
-            <input type="password" placeholder="sk-...">
-          </div>
-        </div>
-
-        <div class="action-bar">
-          <button class="btn btn-dark">▶ Speak</button>
-          <button class="btn btn-dark">⏹ Stop</button>
-          <button class="btn btn-dark">🔄 Loop</button>
-          <button class="btn btn-warning">🎨 Custom Voice</button>
-        </div>
-
-        <div style="font-size: 13px; text-align: center;">
-          Nor-Tec Streaming: <strong style="color: #e91429;">OFFLINE</strong>
-        </div>
-      </section>
-
-      <!-- Right Panel -->
-      <section class="card-panel">
-        <h3>🎙️ Record Custom Voice Sample</h3>
-        <p style="font-size: 13px; color: #ccc;">
-          Record a 10-second sample of your voice to synthesize your custom profile.
-        </p>
-
         <div>
-          <label style="font-size: 12px; color: #aaa;">Voice Profile Label:</label>
-          <input type="text" value="Cyber Pitch Alpha">
+          <label style="font-size: 12px; color: #aaa;">DSP Waveshaper Distortion:</label>
+          <input type="range" min="0.0" max="1.0" step="0.05" value="0.2">
         </div>
-
-        <blockquote class="sample-quote">
-          "Safehost VoicePea changer streams high-definition real-time digital audio."
-        </blockquote>
-
-        <div class="timer-display">10.0s</div>
-
-        <div class="btn-group">
-          <button class="btn btn-success" style="width: 100%;">🔴 Start 10s Recording</button>
-          <button class="btn btn-secondary">Cancel</button>
+        <div>
+          <label style="font-size: 12px; color: #aaa;">Chunk Time-Inversion (Reverse):</label>
+          <input type="range" min="0.0" max="1.0" step="0.05" value="0.0">
         </div>
-      </section>
+      </div>
+
+      <!-- MAIN ACTION BUTTONS -->
+      <div class="action-bar">
+        <button class="btn btn-dark">▶ Speak</button>
+        <button class="btn btn-dark">⏹ Stop</button>
+        <button class="btn btn-dark">🔄 Loop</button>
+        <button class="btn btn-warning" id="openCustomVoiceBtn">🎨 Custom Voice</button>
+      </div>
+
+      <div style="font-size: 13px; text-align: center; margin-top: 5px;">
+        Nor-Tec Streaming: <strong style="color: #e91429;">OFFLINE</strong>
+      </div>
 
     </main>
 
   </div>
 
-  <script src="app.js"></script>
+
+  <!-- =========================================================
+       MODAL 1: RECORD CUSTOM VOICE SAMPLE (HIDDEN BY DEFAULT)
+     ========================================================= -->
+  <div class="modal-overlay" id="customVoiceModal">
+    <div class="modal-content card-panel">
+      <h3>🎙️ Record Custom Voice Sample</h3>
+      <p style="font-size: 13px; color: #ccc; margin: 0;">
+        Record a 10-second sample of your voice. VoicePea will capture raw PCM buffers to synthesize your profile into the voice selector.
+      </p>
+
+      <div>
+        <label style="font-size: 12px; color: #aaa;">Voice Profile Label:</label>
+        <input type="text" value="Cyber Pitch Alpha">
+      </div>
+
+      <blockquote style="font-style: italic; font-size: 13px; color: #aaa; border-left: 3px solid #1db954; margin: 0; padding-left: 10px;">
+        "Safehost VoicePea changer streams high-definition real-time digital audio."
+      </blockquote>
+
+      <div style="font-size: 24px; font-weight: bold; text-align: center; color: #1db954;">
+        10.0s
+      </div>
+
+      <div class="btn-group">
+        <button class="btn btn-success" style="flex: 1;">🔴 Start 10s Recording</button>
+        <button class="btn btn-secondary" id="closeCustomVoiceBtn">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- =========================================================
+       MODAL 2: HARDWARE ACCESS (HIDDEN BY DEFAULT)
+     ========================================================= -->
+  <div class="modal-overlay" id="hardwareModal">
+    <div class="modal-content card-panel">
+      <h3>🎙️ Hardware Access</h3>
+      <p style="font-size: 13px; color: #ccc; margin: 0;">
+        VoicePea Changer needs access to your hardware microphone to process real-time voice distortion, capture speech, and clone custom pitch profiles.
+      </p>
+      <div style="color: #aaa; font-size: 13px;">Detecting hardware devices...</div>
+      <div class="btn-group">
+        <button class="btn btn-secondary" id="closeHardwareBtn">Deny</button>
+        <button class="btn btn-primary">Grant Mic Access</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- JAVASCRIPT CONTROLLER TO SHOW/HIDE MODALS -->
   <script>
-    // Embedded Theme Toggle Logic
-    const btn = document.getElementById('themeToggleBtn');
-    const box = document.querySelector('.voizz-box');
-    if (btn && box) {
-      btn.addEventListener('click', () => {
-        box.classList.toggle('theme-liquid-glass');
-        box.classList.toggle('theme-normal');
-      });
-    }
+    const customModal = document.getElementById('customVoiceModal');
+    const openCustomBtn = document.getElementById('openCustomVoiceBtn');
+    const closeCustomBtn = document.getElementById('closeCustomVoiceBtn');
+
+    // Open Custom Voice Modal when clicking "🎨 Custom Voice"
+    openCustomBtn.addEventListener('click', () => {
+      customModal.classList.add('active');
+    });
+
+    // Close Custom Voice Modal when clicking "Cancel"
+    closeCustomBtn.addEventListener('click', () => {
+      customModal.classList.remove('active');
+    });
   </script>
+
+  <script src="app.js"></script>
 </body>
 </html>
