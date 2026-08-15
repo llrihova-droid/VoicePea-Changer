@@ -1,4 +1,19 @@
-/* 1. CORE HARDWARE ACCELERATION & GLOBAL SMOOTHNESS */
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VoicePea Changer</title>
+
+  <!-- PWA Manifest & App Settings -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#18181b">
+
+  <!-- =========================================================
+       ALL CSS STYLES DIRECTLY EMBEDDED INSIDE HTML
+     ========================================================= -->
+  <style>
+    /* 1. CORE HARDWARE ACCELERATION & GLOBAL SMOOTHNESS */
     * {
       box-sizing: border-box;
       /* Smooth physical motion curve */
@@ -222,3 +237,118 @@
   </style>
 </head>
 <body>
+
+  <!-- Main App Window -->
+  <div class="voizz-box theme-liquid-glass">
+    
+    <header class="app-header">
+      <h2>🎙️ VoicePea Changer</h2>
+      <button id="themeToggleBtn" class="theme-toggle-btn">✨ Toggle Theme</button>
+    </header>
+
+    <main class="main-layout">
+
+      <!-- Left Panel -->
+      <section class="card-panel">
+        <h3>🎙️ Hardware Access</h3>
+        <p style="font-size: 13px; color: #ccc;">
+          VoicePea Changer needs access to your hardware microphone to process real-time voice distortion.
+        </p>
+        <div style="color: #aaa; font-size: 13px;">Detecting hardware devices...</div>
+        <div class="btn-group">
+          <button class="btn btn-secondary">Deny</button>
+          <button class="btn btn-primary">Grant Mic Access</button>
+        </div>
+      </section>
+
+      <!-- Center Panel -->
+      <section class="card-panel">
+        <div style="text-align: center; padding: 8px; background: #fff; color: #000; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">
+          Sign in with Google
+        </div>
+
+        <input type="text" placeholder="Type text to speak, or press the mic">
+
+        <div>
+          <label style="font-size: 12px; color: #aaa;">Select Engine Voice Target:</label>
+          <select>
+            <option>Custom Voice 1 (Custom)</option>
+            <option>Cyber Pitch Alpha</option>
+            <option>Deep Robotic Low</option>
+          </select>
+        </div>
+
+        <!-- PC ONLY SETTINGS -->
+        <div class="pc-only-settings" style="display: flex; flex-direction: column; gap: 12px;">
+          <div>
+            <label style="font-size: 12px; color: #aaa;">Playback Rate / Speed:</label>
+            <input type="range" min="0.5" max="2.0" step="0.1" value="1.0">
+          </div>
+          <div>
+            <label style="font-size: 12px; color: #aaa;">DSP Waveshaper Distortion:</label>
+            <input type="range" min="0.0" max="1.0" step="0.05" value="0.2">
+          </div>
+          <div>
+            <label style="font-size: 12px; color: #aaa;">Chunk Time-Inversion (Reverse):</label>
+            <input type="range" min="0.0" max="1.0" step="0.05" value="0.0">
+          </div>
+          <div>
+            <label style="font-size: 12px; color: #aaa;">Whisper / OpenAI API Key (Optional):</label>
+            <input type="password" placeholder="sk-...">
+          </div>
+        </div>
+
+        <div class="action-bar">
+          <button class="btn btn-dark">▶ Speak</button>
+          <button class="btn btn-dark">⏹ Stop</button>
+          <button class="btn btn-dark">🔄 Loop</button>
+          <button class="btn btn-warning">🎨 Custom Voice</button>
+        </div>
+
+        <div style="font-size: 13px; text-align: center;">
+          Nor-Tec Streaming: <strong style="color: #e91429;">OFFLINE</strong>
+        </div>
+      </section>
+
+      <!-- Right Panel -->
+      <section class="card-panel">
+        <h3>🎙️ Record Custom Voice Sample</h3>
+        <p style="font-size: 13px; color: #ccc;">
+          Record a 10-second sample of your voice to synthesize your custom profile.
+        </p>
+
+        <div>
+          <label style="font-size: 12px; color: #aaa;">Voice Profile Label:</label>
+          <input type="text" value="Cyber Pitch Alpha">
+        </div>
+
+        <blockquote class="sample-quote">
+          "Safehost VoicePea changer streams high-definition real-time digital audio."
+        </blockquote>
+
+        <div class="timer-display">10.0s</div>
+
+        <div class="btn-group">
+          <button class="btn btn-success" style="width: 100%;">🔴 Start 10s Recording</button>
+          <button class="btn btn-secondary">Cancel</button>
+        </div>
+      </section>
+
+    </main>
+
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    // Embedded Theme Toggle Logic
+    const btn = document.getElementById('themeToggleBtn');
+    const box = document.querySelector('.voizz-box');
+    if (btn && box) {
+      btn.addEventListener('click', () => {
+        box.classList.toggle('theme-liquid-glass');
+        box.classList.toggle('theme-normal');
+      });
+    }
+  </script>
+</body>
+</html>
